@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: webportal-ds
+spec:
+  selector:
+    matchLabels:
+      app: webportal
+  template:
+    metadata:
+      labels:
+        app: webportal
+      name: webportal
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: pai-master
+                operator: In
+                values:
+                - 'true'
+      containers:
+      - env:
+        - name: REST_SERVER_URI
+          value: http://10.20.37.175:9186
+        - name: PROMETHEUS_URI
+          value: http://10.20.37.175:9091
+        - name: YARN_WEB_PORTAL_URI
+          value: http://10.20.37.175:8088
+        - name: GRAFANA_URI
+          value: http://10.20.37.175:3000
+        - name: K8S_DASHBOARD_URI
+          value: http://10.20.37.175:9090
+        - name: K8S_API_SERVER_URI
+          value: http://10.20.37.175:8080
+        - name: EXPORTER_PORT
+          value: '9100'
+        - name: PROM_SCRAPE_TIME
+          value: 300s
+        - name: WEBPORTAL_PLUGINS
+          value: '[{"uri": "/scripts/plugins/marketplace.bundle.js", "title": "Marketplace"}]
+
+            '
+        image: docker.io/openpai/webportal:v0.9.1
+        imagePullPolicy: Always
+        name: webportal
+        ports:
+        - containerPort: 8080
+          hostPort: 9286
+          name: webportal
+        resources:
+          limits:
+            memory: 512Mi
+      hostNetwork: false
+      hostPID: false
+      imagePullSecrets:
+      - name: pai-secret

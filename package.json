@@ -61,7 +61,6 @@
     "moment": "~2.20.1",
     "monaco-editor": "~0.14.3",
     "morgan": "~1.9.0",
-    "node-sass": "~4.7.2",
     "raw-loader": "~0.5.1",
     "rimraf": "~2.6.2",
     "sass-loader": "~6.0.6",
@@ -82,5 +81,8 @@
     "build:dev": "npm run build -- --debug --devtool eval-cheap-module-source-map --output-pathinfo --watch",
     "prestart": "envsub --env-file .env --system src/app/env.js.template dist/scripts/env.js",
     "start": "node server"
+  },
+  "devDependencies": {
+    "node-sass": "~4.7.2"
   }
 }
